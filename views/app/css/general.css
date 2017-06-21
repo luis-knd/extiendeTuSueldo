@@ -1,0 +1,245 @@
+/**
+ *  Estilos Generales del HTML
+ */
+body {
+	position: relative;
+	width: 100%;
+	background-color: #fff;
+	margin: auto;
+	min-height: 100vh;
+}
+
+
+header {
+	background-color: #B92326;
+	width: 100%;
+}
+
+main {
+	font-family: Verdana, Comic, Arial;
+	color: #000;
+    z-index: 2000;
+}
+
+footer{
+	opacity: 0.8; 
+    background-color: rgb(68, 68, 68);
+	width: 100%;
+	height: auto;
+	color: #fff;
+	text-align: center;
+	position: fixed;
+	bottom: 0%;
+	left: 0%;
+    font-family: arial,verdana;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+p {
+    text-align: justify;
+}
+
+.centrado {
+    text-align: center;
+}
+
+.right {
+    position: absolute;
+    right: 0%;
+    margin: 0px;
+}
+
+
+.left {
+    position: absolute;
+    left: 0%;
+    margin: 0px;
+}
+
+.anchoCompleto {
+    width: 100%;
+}
+/*  -----------------------------------------------------   */
+
+
+/**
+ *  Estilo para centrar Horizontal y Verticalmente
+ */
+.centrado-porcentual {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+}
+.centrado-vertical {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    width: 98%
+}
+/*  -----------------------------------------------------   */
+
+/**
+ *  Estilo para los Formularios con Span en Transition
+ */
+.textarea-contact textarea {
+    height: 100%;
+    width: 100%;
+    border: 1;
+    padding: 20px;
+    background-color: transparent;
+    float: left;
+    z-index: 2;
+    font-size: 18px;
+    color: #967374;
+    resize: none;
+}
+
+.textarea-contact > span {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #cdcdcd;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+    z-index: 1;
+    pointer-events:none; 
+    overflow:hidden; 
+}
+
+.input-contact {
+    height: 40px;
+    width: 100%;
+    border: solid 1px rgba(0, 0, 0, .1);
+    position: relative;
+    margin-bottom: 18px;
+}
+
+.input-contact input[type="text"] {
+    height: 100%;
+    width: 100%;
+    border: 1;
+    padding: 0 20px;
+    float: left;
+    position: relative;
+    background-color: transparent;
+    border-color: #181818
+    z-index: 2;
+    font-size: 16px;
+    color: #967374;
+}
+
+.input-contact input[type="password"] {
+    height: 100%;
+    width: 100%;
+    border: 1;
+    padding: 0 20px;
+    float: left;
+    position: relative;
+    background-color: transparent;
+    border-color: #181818
+    z-index: 2;
+    font-size: 16px;
+    color: #967374;
+}
+
+.input-contact input[type="email"] {
+    height: 100%;
+    width: 100%;
+    border: 1;
+    padding: 0 20px;
+    float: left;
+    position: relative;
+    background-color: transparent;
+    border-color: #181818
+    z-index: 2;
+    font-size: 16px;
+    color: #967374;
+}
+
+.input-contact input[type="number"] {
+    height: 100%;
+    width: 100%;
+    border: 1;
+    padding: 0 20px;
+    float: left;
+    position: relative;
+    background-color: transparent;
+    border-color: #181818
+    z-index: 2;
+    font-size: 16px;
+    color: #967374;
+}
+
+.input-contact > span {
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #A5ACB2;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+    z-index: 1;
+    pointer-events:none; 
+    overflow:hidden; 
+}
+
+.input-contact > span.active,
+.textarea-contact > span.active {
+    color: #B92326;
+    font-size: 12px;
+    top: 0px;
+    left: 5px;
+    background-color: #fff;
+    padding: 1px;
+    border: 0;
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+}
+/*  -----------------------------------------------------   */
+
+/**
+ *  Botones de las monedas
+ */
+.btn-group {
+    position: absolute;
+    margin: -10% 0% 5% 50%;
+    right: 0%;
+    width: 100%;
+}
+
+.bandera {
+    margin: 1px -5px;
+}
+/*  -----------------------------------------------------   */
+
+
+/**
+ *  Menu lateral Izquierdo
+ */
+#accordion {
+    margin-left: -3%;
+}
+
+.card {
+    margin: -6px 0px;
+}
