@@ -1,5 +1,5 @@
 <footer>
-    <div class="mbr-overlay" style=""></div>
+    <div class="mbr-overlay"></div>
     <div class="mbr-section__container container">
         <div class="mbr-footer mbr-footer--wysiwyg row">
             <div class="col-sm-12">

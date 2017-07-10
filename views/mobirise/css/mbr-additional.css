@@ -1,9 +1,11 @@
 #ext_menu-0 .mbr-brand__name {
-  font-size: 14px;
+  	font-size: 14px;
 }
 #ext_menu-0.mbr-navbar--stuck .mbr-navbar__section {
-  background: #B92326;
+  	background: #B92326;
+  	z-index: 8000;
+
 }
 #ext_menu-0 .mbr-navbar__section {
-  background: #B92326;
+  	background: #B92326;
 }
