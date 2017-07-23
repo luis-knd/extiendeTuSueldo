@@ -1,5 +1,9 @@
 <?php 
 	$db = new Conexion();
-	include(HTML_DIR . 'index/index.php');
-	$db->close();
+	if (isset($_SESSION['app_id'])) {
+		include(HTML_DIR . 'main/principal.php');
+	} else {
+		include(HTML_DIR . 'index/index.php');
+	}
+	$db->disconnect();
 ?>

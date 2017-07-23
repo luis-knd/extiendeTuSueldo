@@ -15,7 +15,8 @@ function goLogin() {
   	sesion 	= document.querySelector('#sesion').checked ? true : false;
   	if (user != '') {
   		if (pass != '') {  			
-		  	form = 'user=' + user + '&pass' + pass + '&sesion' + sesion;
+		  	form = 'user=' + user + '&pass=' + pass + '&sesion=' + sesion;
+		  	console.log(form);
 		  	connect = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
 		  	connect.onreadystatechange = function() {
 				if(connect.readyState == 4 && connect.status == 200) {

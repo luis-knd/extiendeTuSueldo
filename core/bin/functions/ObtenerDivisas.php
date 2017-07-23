@@ -20,8 +20,9 @@ function conversor_monedas($moneda_origen,$moneda_destino,$cantidad) {
  */
 function dolarToday()
 {
-  $url ='https://s3.amazonaws.com/dolartoday/data.json';
-  $json = file_get_contents($url);
+  $url 	 ='https://s3.amazonaws.com/dolartoday/data.json';
+  $json  = file_get_contents($url);
+  $json  = utf8_encode($json);
   $array = json_decode($json,true);
   return $array;
 }

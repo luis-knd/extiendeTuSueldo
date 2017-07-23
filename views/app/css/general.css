@@ -45,6 +45,41 @@ a:hover {
 p {
     text-align: justify;
 }
+/**
+ * [media Botones de Páginas que no puedes Visualizar]
+ */
+@media (min-width: 155px) {
+    .texto-chico {
+        font-size: 45%;
+        padding: 4px;
+    }
+}
+@media (min-width: 256px) {
+    .texto-chico {
+        font-size: 55%;
+    }
+}
+@media (min-width: 320px) {
+    .texto-chico {
+        font-size: 65%;
+    }
+}
+
+@media (min-width: 400px) {
+    .texto-chico {
+        font-size: 75%;
+    }
+}
+@media (min-width: 540px) {
+    .texto-chico {
+        font-size: 90%;
+    }
+}
+/*  -----------------------------------------------------   */
+
+.justify {
+    text-align: justify;
+}
 
 .centrado {
     text-align: center;

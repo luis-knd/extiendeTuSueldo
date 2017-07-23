@@ -10,10 +10,12 @@
  * https://github.com/joshcam/PHP-MySQLi-Database-Class/blob/master/MysqliDb.php
  */
 
-	
+
+
+
 class Conexion
 {
-	/**
+    /**
      * Instancia estática de sí mismo 
      * @var Conexion
      */
@@ -187,7 +189,7 @@ class Conexion
     public $defConnectionName = 'default';
 
 
-    /**
+     /**
      * @param string $host
      * @param string $username
      * @param string $password
@@ -198,73 +200,30 @@ class Conexion
      */
     public function __construct($host = DB_HOST, $username = DB_USER, $password = DB_PASS, $db = DB_NAME, $port = null, $charset = 'utf8', $socket = null)
     {
-    	$isSubQuery = false;
+        $isSubQuery = false;
+        // si los parámetros se pasaron como array 
+        if (is_array($host)) {
+            foreach ($host as $key => $val) {
+                $$key = $val;
+            }
+        }
         $this->addConnection('default', [
-            'host' 		=> $host,
-            'username' 	=> $username,
-            'password' 	=> $password,
-            'db' 		=> $db,
-            'port' 		=> $port,
-            'socket' 	=> $socket,
-            'charset' 	=> $charset
+            'host' => $host,
+            'username' => $username,
+            'password' => $password,
+            'db' => $db,
+            'port' => $port,
+            'socket' => $socket,
+            'charset' => $charset
         ]);
+        if ($isSubQuery) {
+            $this->isSubQuery = true;
+            return;
+        }
         if (isset($prefix)) {
             $this->setPrefix($prefix);
         }
         self::$_instance = $this;
-    }
-
-
-    /**
-     * Un método para desconectarse de la base de datos 
-     *
-     * @params string $connection nombre de conexión para desconectarse 
-     * @throws Exception
-     * @return void
-     */
-    public function disconnect($connection = 'default')
-    {
-        if (!isset($this->_mysqli[$connection]))
-            return;
-        $this->_mysqli[$connection]->close();
-        unset($this->_mysqli[$connection]);
-    }
-
-
-    /**
-     * Crear y almacenar en _mysqli nueva instancia mysqli
-     * @param string $name
-     * @param array $params
-     * @return $this
-     */
-    public function addConnection($name, array $params)
-    {
-        $this->connectionsSettings[$name] = [];
-        foreach (['host', 'username', 'password', 'db', 'port', 'socket', 'charset'] as $k) {
-            $prm = isset($params[$k]) ? $params[$k] : null;
-            if ($k == 'host') {
-                if (is_object($prm))
-                    $this->_mysqli[$name] = $prm;
-                if (!is_string($prm))
-                    $prm = null;
-            }
-            $this->connectionsSettings[$name][$k] = $prm;
-        }
-        return $this;
-    }
-
-
-    /**
-     * Un método para obtener el objeto mysqli o crearlo en caso necesario
-     * 
-     * @return mysqli
-     */
-    public function mysqli()
-    {
-        if (!isset($this->_mysqli[$this->defConnectionName])) {
-            $this->connect($this->defConnectionName);
-        }
-        return $this->_mysqli[$this->defConnectionName];
     }
 
 
@@ -301,39 +260,97 @@ class Conexion
     }
 
 
-    /**
-     * Una conveniente función SELECT *. 
-     *
-     * @param string  $tableName El nombre de la tabla de base de datos con la que trabajar.
-     * @param int|array $numRows Array para definir el límite de SQL en formato Array 
-     * ($count, $offset) o sólo $count 
-     * @param string $columns Columnas deseadas
-     *
-     * @return array Contiene las filas devueltas de la consulta select. 
-     */
-    public function get($tableName, $numRows, $columns)
+    public function disconnectAll()
     {
-        if (empty($columns)) {
-            $columns = '*';
+        foreach (array_keys($this->_mysqli) as $k) {
+            $this->disconnect($k);
         }
-        $column = is_array($columns) ? implode(', ', $columns) : $columns;
-        if (strpos($tableName, '.') === false) {
-            $this->_tableName = self::$prefix . $tableName;
-        } else {
-            $this->_tableName = $tableName;
+    }
+
+    /**
+     * Establecer el nombre de conexión a utilizar en la siguiente consulta
+     * @param string $name
+     * @return $this
+     * @throws Exception
+     */
+    public function connection($name)
+    {
+        if (!isset($this->connectionsSettings[$name]))
+            throw new Exception('Conexión ' . $name . ' no fue agregado.');
+        $this->defConnectionName = $name;
+        return $this;
+    }
+
+
+
+    /**
+     * Un método para desconectarse de la base de datos 
+     *
+     * @params string $connection nombre de conexión para desconectarse 
+     * @throws Exception
+     * @return void
+     */
+    public function disconnect($connection = 'default')
+    {
+        if (!isset($this->_mysqli[$connection]))
+            return;
+        $this->_mysqli[$connection]->close();
+        unset($this->_mysqli[$connection]);
+    }
+
+
+
+
+    /**
+     * Crear y almacenar en _mysqli nueva instancia mysqli
+     * @param string $name
+     * @param array $params
+     * @return $this
+     */
+    public function addConnection($name, array $params)
+    {
+        $this->connectionsSettings[$name] = [];
+        foreach (['host', 'username', 'password', 'db', 'port', 'socket', 'charset'] as $k) {
+            $prm = isset($params[$k]) ? $params[$k] : null;
+            if ($k == 'host') {
+                if (is_object($prm))
+                    $this->_mysqli[$name] = $prm;
+                if (!is_string($prm))
+                    $prm = null;
+            }
+            $this->connectionsSettings[$name][$k] = $prm;
         }
-        $this->_query = 'SELECT ' . implode(' ', $this->_queryOptions) . ' ' .
-            $column . " FROM " . $this->_tableName;
-        $stmt = $this->_buildQuery($numRows);
-        if ($this->isSubQuery) {
-            return $this;
+        return $this;
+    }
+
+
+
+    /**
+     * Un método para obtener el objeto mysqli o crearlo en caso necesario
+     * 
+     * @return mysqli
+     */
+    public function mysqli()
+    {
+        if (!isset($this->_mysqli[$this->defConnectionName])) {
+            $this->connect($this->defConnectionName);
         }
-        $stmt->execute();
-        $this->_stmtError = $stmt->error;
-        $this->_stmtErrno = $stmt->errno;
-        $res = $this->_dynamicBindResults($stmt);
-        $this->reset();
-        return $res;
+        return $this->_mysqli[$this->defConnectionName];
+    }
+
+
+    /**
+     * Un método de devolver la instancia estática para permitir el acceso al 
+  	 * objeto instanciado dentro de otra clase. 
+ 	 * Heredar esta clase requeriría recargar información de conexión. 
+     *
+     * @uses $db = Conexion::getInstance();
+     *
+     * @return Conexion Returns the current instance.
+     */
+    public static function getInstance()
+    {
+        return self::$_instance;
     }
 
 
@@ -369,6 +386,265 @@ class Conexion
     }
 
 
+
+    /**
+     * Función auxiliar para crear dbObject con tipo de devolución JSON
+     *
+     * @return Conexion
+     */
+    public function jsonBuilder()
+    {
+        $this->returnType = 'json';
+        return $this;
+    }
+
+    /**
+     * Función de ayuda para crear dbObject con tipo de retorno de array 
+ 	 * Añadido para la coherencia con tipo de salida predeterminado 
+     *
+     * @return Conexion
+     */
+    public function arrayBuilder()
+    {
+        $this->returnType = 'array';
+        return $this;
+    }
+
+
+    /**
+     * Función de ayuda para crear dbObject con tipo de retorno de objeto. 
+     *
+     * @return Conexion
+     */
+    public function objectBuilder()
+    {
+        $this->returnType = 'object';
+        return $this;
+    }
+
+
+    /**
+     * Método para establecer un prefijo 
+     *
+     * @param string $prefix     Contiene un prefijo de tabla 
+     * 
+     * @return Conexion
+     */
+    public function setPrefix($prefix = '')
+    {
+        self::$prefix = $prefix;
+        return $this;
+    }
+
+
+	/**
+	 * Empuja una declaración no preparada a la pila mysqli. 
+  	 * ADVERTENCIA: Utilizar con precaución. 
+  	 * Este método no escapa de las cadenas por defecto, así que asegúrate de que nunca lo usarás en producción.
+	 * 
+	 * @param [[Type]] $query [[Description]]
+	 */
+	private function queryUnprepared($query)
+	{	
+		//  Ejecutar query
+		$stmt = $this->mysqli()->query($query);
+		// 	¿Falló? 
+		if(!$stmt){
+			throw new Exception("Unprepared Query Failed, ERRNO: ".$this->mysqli()->errno." (".$this->mysqli()->error.")", $this->mysqli()->errno);
+		};
+		
+		// return stmt para uso futuro 
+		return $stmt;
+	}
+	
+
+	/**
+     * Ejecutar consulta SQL sin procesar. 
+     *
+     * @param string $query      Consulta proporcionada por el usuario para ejecutar. 
+     * @param array  $bindParams Variables array para enlazar con la instrucción SQL.
+     *
+     * @return array Contiene las filas devueltas de la consulta. 
+     */
+    public function rawQuery($query, $bindParams = null)
+    {
+        $params = array(''); // Create the empty 0 index
+        $this->_query = $query;
+        $stmt = $this->_prepareQuery();
+        if (is_array($bindParams) === true) {
+            foreach ($bindParams as $prop => $val) {
+                $params[0] .= $this->_determineType($val);
+                array_push($params, $bindParams[$prop]);
+            }
+            call_user_func_array(array($stmt, 'bind_param'), $this->refValues($params));
+        }
+        $stmt->execute();
+        $this->count = $stmt->affected_rows;
+        $this->_stmtError = $stmt->error;
+        $this->_stmtErrno = $stmt->errno;
+        $this->_lastQuery = $this->replacePlaceHolders($this->_query, $params);
+        $res = $this->_dynamicBindResults($stmt);
+        $this->reset();
+        return $res;
+    }
+
+
+    /**
+     * Función auxiliar para ejecutar una consulta SQL sin procesar y devolver sólo 1 fila de resultados. 
+  	 * Tenga en cuenta que la función no agrega 'límite 1' a la consulta por sí mismo 
+ 	 * La misma idea que getOne () 
+     *
+     * @param string $query      Consulta proporcionada por el usuario para ejecutar. 
+     * @param array  $bindParams Variables array para enlazar con la instrucción SQL. 
+     *
+     * @return array|null Contiene la fila devuelta de la consulta.
+     */
+    public function rawQueryOne($query, $bindParams = null)
+    {
+        $res = $this->rawQuery($query, $bindParams);
+        if (is_array($res) && isset($res[0])) {
+            return $res[0];
+        }
+        return null;
+    }
+
+
+    /**
+     * Función de ayuda para ejecutar una consulta SQL sin formato y devolver sólo 1 columna de resultados. 
+  	 * Si se encuentra 'límite 1', se devolverá la cadena en lugar del array 
+	 * La misma idea que getValue () 
+     *
+     * @param string $query      Consulta proporcionada por el usuario para ejecutar. 
+     * @param array  $bindParams Variables array para enlazar con la instrucción SQL. 
+     *
+     * @return mixed Contiene la fila devuelta de la consulta.
+     */
+    public function rawQueryValue($query, $bindParams = null)
+    {
+        $res = $this->rawQuery($query, $bindParams);
+        if (!$res) {
+            return null;
+        }
+        $limit = preg_match('/limit\s+1;?$/i', $query);
+        $key = key($res[0]);
+        if (isset($res[0][$key]) && $limit == true) {
+            return $res[0][$key];
+        }
+        $newRes = Array();
+        for ($i = 0; $i < $this->count; $i++) {
+            $newRes[] = $res[$i][$key];
+        }
+        return $newRes;
+    }
+
+
+    /**
+     * Un método para realizar la consulta SELECT 
+     * 
+     * @param string $query   Contiene una consulta de selección proporcionada por el usuario.
+     * @param int|array $numRows Array para definir el límite de SQL en formato Array ($ count, $ offset) 
+     *
+     * @return array Contiene las filas devueltas de la consulta.
+     */
+    public function query($query, $numRows = null)
+    {
+        $this->_query = $query;
+        $stmt = $this->_buildQuery($numRows);
+        $stmt->execute();
+        $this->_stmtError = $stmt->error;
+        $this->_stmtErrno = $stmt->errno;
+        $res = $this->_dynamicBindResults($stmt);
+        $this->reset();
+        return $res;
+    }
+
+
+    /**
+     * Este método le permite especificar varias opciones (método de encadenamiento opcional) para las consultas SQL.
+     *
+     * @uses $Conexion->setQueryOption('name');
+     *
+     * @param string|array $options El nombre opcional de la consulta. 
+     * 
+     * @throws Exception
+     * @return Conexion
+     */
+    public function setQueryOption($options)
+    {
+        $allowedOptions = Array('ALL', 'DISTINCT', 'DISTINCTROW', 'HIGH_PRIORITY', 'STRAIGHT_JOIN', 'SQL_SMALL_RESULT',
+            'SQL_BIG_RESULT', 'SQL_BUFFER_RESULT', 'SQL_CACHE', 'SQL_NO_CACHE', 'SQL_CALC_FOUND_ROWS',
+            'LOW_PRIORITY', 'IGNORE', 'QUICK', 'MYSQLI_NESTJOIN', 'FOR UPDATE', 'LOCK IN SHARE MODE');
+        if (!is_array($options)) {
+            $options = Array($options);
+        }
+        foreach ($options as $option) {
+            $option = strtoupper($option);
+            if (!in_array($option, $allowedOptions)) {
+                throw new Exception('Opción de consulta incorrecta: ' . $option);
+            }
+            if ($option == 'MYSQLI_NESTJOIN') {
+                $this->_nestJoin = true;
+            } elseif ($option == 'FOR UPDATE') {
+                $this->_forUpdate = true;
+            } elseif ($option == 'LOCK IN SHARE MODE') {
+                $this->_lockInShareMode = true;
+            } else {
+                $this->_queryOptions[] = $option;
+            }
+        }
+        return $this;
+    }
+
+
+
+    /**
+     * Función para habilitar SQL_CALC_FOUND_ROWS en las consultas get 
+     *
+     * @return Conexion
+     */
+    public function withTotalCount()
+    {
+        $this->setQueryOption('SQL_CALC_FOUND_ROWS');
+        return $this;
+    }
+
+
+    /**
+     * Una conveniente función SELECT *. 
+     *
+     * @param string  $tableName El nombre de la tabla de base de datos con la que trabajar.
+     * @param int|array $numRows Array para definir el límite de SQL en formato Array 
+     * ($count, $offset) o sólo $count 
+     * @param string $columns Columnas deseadas
+     *
+     * @return array Contiene las filas devueltas de la consulta select. 
+     */
+    public function get($tableName, $numRows = null, $columns = '*')
+    {
+        if (empty($columns)) {
+            $columns = '*';
+        }
+        $column = is_array($columns) ? implode(', ', $columns) : $columns;
+        if (strpos($tableName, '.') === false) {
+            $this->_tableName = self::$prefix . $tableName;
+        } else {
+            $this->_tableName = $tableName;
+        }
+        $this->_query = 'SELECT ' . implode(' ', $this->_queryOptions) . ' ' .
+            $column . " FROM " . $this->_tableName;
+        $stmt = $this->_buildQuery($numRows);
+        if ($this->isSubQuery) {
+            return $this;
+        }
+        $stmt->execute();
+        $this->_stmtError = $stmt->error;
+        $this->_stmtErrno = $stmt->errno;
+        $res = $this->_dynamicBindResults($stmt);
+        $this->reset();
+        return $res;
+    }
+
+
     /**
      * Una conveniente función SELECT * para obtener un registro. 
      *
@@ -400,7 +676,7 @@ class Conexion
 	 * Utilice null para unlimited..1 por defecto 
  	 * @return mixed Contiene el valor de una columna / array de valores devueltos 
      */
-    public function getValue($tableName, $column, $limit)
+    public function getValue($tableName, $column, $limit = 1)
     {
         $res = $this->ArrayBuilder()->get($tableName, $limit, "{$column} AS retval");
         if (!$res) {
@@ -418,21 +694,6 @@ class Conexion
         }
         return $newRes;
     }
-
-
-
-    /**
-     * Función de ayuda para crear dbObject con tipo de retorno de array 
- 	 * Añadido para la coherencia con tipo de salida predeterminado 
-     *
-     * @return Conexion
-     */
-    public function arrayBuilder()
-    {
-        $this->returnType = 'array';
-        return $this;
-    }
-
 
 
     /**
@@ -1736,6 +1997,19 @@ class Conexion
     public function func($expr, $bindParams = null)
     {
         return array("[F]" => array($expr, $bindParams));
+    }
+
+
+    /**
+     * El método crea un nuevo objeto Conexion para una generación de subconsulta
+     * 
+     * @param string $subQueryAlias
+     * 
+     * @return Conexion
+     */
+    public static function subQuery($subQueryAlias = "")
+    {
+        return new self(array('host' => $subQueryAlias, 'isSubQuery' => true));
     }
 
 

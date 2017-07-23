@@ -13,7 +13,7 @@ date_default_timezone_set('America/Caracas');
 define('DB_HOST','localhost');
 define('DB_USER','root');
 define('DB_PASS','');
-define('DB_NAME','candedb');
+define('DB_NAME','extiende');
 
 #Constantes de la APP
 define('HTML_DIR','html/'); 						//Constante para enrutar a las vistas en el directorio
@@ -34,6 +34,7 @@ define('PHPMAILER_PORT', 465);								//Puerto del Mail
 #Estructura
 require('core/models/class.Conexion.php');			//incluye la clase de conexion a la BD
 require('core/bin/functions/ObtenerDivisas.php');
+require('core/bin/functions/Encrypt.php');
 
 #Constantes del Tipo de Cambio
 $dolarPorPeso = conversor_monedas("USD","ARS",1);	// Dolar a Pesos Argentinos
@@ -45,7 +46,8 @@ settype($euroPorPeso,'float'); 						// Parseamos la variable a Float
 $realPorPeso = conversor_monedas("BRL","ARS",1); 	// Reales a Pesos Argentinos
 settype($realPorPeso,'float');						// Parseamos la variable a Float
 
-$bolivarPorDolar = dolarToday()['USD']['transferencia']; // Bolívar por Dolar
+$bolivarPorDolar = dolarToday()["USD"]["transferencia"]; // Bolívar por Dolar
 settype($bolivarPorDolar,'float');						 // Parseamos la variable a Float
 $bolivarPorPeso  = $bolivarPorDolar / $dolarPorPeso; 	 // Bolívar por Pesos Arg
+
 ?>
