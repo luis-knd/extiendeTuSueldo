@@ -302,6 +302,18 @@ class Conexion
 
 
     /**
+     * Función para habilitar SQL_CALC_FOUND_ROWS en las consultas get 
+     *
+     * @return Conexion
+     */
+    public function withTotalCount()
+    {
+        $this->setQueryOption('SQL_CALC_FOUND_ROWS');
+        return $this;
+    }
+
+
+    /**
      * Una conveniente función SELECT *. 
      *
      * @param string  $tableName El nombre de la tabla de base de datos con la que trabajar.
@@ -431,6 +443,27 @@ class Conexion
     {
         $this->returnType = 'array';
         return $this;
+    }
+
+
+	/**
+     * Un método para realizar la consulta SELECT 
+     * 
+     * @param string $query   Contiene una consulta de selección proporcionada por el usuario.
+     * @param int|array $numRows Array para definir el límite de SQL en formato Array ($ count, $ offset) 
+     *
+     * @return array Contiene las filas devueltas de la consulta.
+     */
+    public function query($query, $numRows = null)
+    {
+        $this->_query = $query;
+        $stmt = $this->_buildQuery($numRows);
+        $stmt->execute();
+        $this->_stmtError = $stmt->error;
+        $this->_stmtErrno = $stmt->errno;
+        $res = $this->_dynamicBindResults($stmt);
+        $this->reset();
+        return $res;
     }
 
 

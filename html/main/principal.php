@@ -1,7 +1,10 @@
 <?php include(HTML_DIR . 'overall/header.php'); ?>
 <body>
 	<?php include(HTML_DIR . 'overall/topnav.php'); ?>
-	<?php if (isset($_SESSION['app_id'])) { ?>
+	<?php if (isset($_SESSION['app_id'])) { 
+		if (!isset($_SESSION['app_id']['pais_residencia'])) { 
+			include(HTML_DIR . 'public/definirPreferencias.php');
+		} else { ?>
 		<aside class="mbr-section mbr-after-navbar col-lg-12 right">
 			<i class="btn btn-link btn-xs"> 
 				<img src="views/app/images/banderas/usa.png" class="bandera"> 
@@ -147,6 +150,9 @@
 					</div>
 				</div>
 				<main class="col-md-9">
+					<pre>
+						<?php print_r($_SESSION['app_id']); ?>
+					</pre>
 			       	<h4 class="centrado">Resumen</h4>
 					<table class="table">
 						<thead>
@@ -254,7 +260,8 @@
 			</div>
 	    </section><br /><br />	
 	<?php 
-	} else{ 
+		} 
+	} else { 
 	 	include(HTML_DIR . 'public/sinpermiso.php');
 	}
 	include(HTML_DIR . 'overall/footer.php'); ?>

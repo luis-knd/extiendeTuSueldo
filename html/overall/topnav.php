@@ -11,6 +11,12 @@
                 if(!isset($_SESSION['app_id'])) {
                     echo "";
                 } else {
+                    if (strlen($_SESSION['app_id']['nombre']) + strlen($_SESSION['app_id']['apellido']) <= 30) {
+                        $usuario = strtoupper($_SESSION['app_id']['nombre']) .' '. strtoupper($_SESSION['app_id']['apellido']);
+                    } else {
+                        $usuario = strtoupper($_SESSION['app_id']['nombre']);
+                    }
+                    
                     echo '
                 <div class="mbr-navbar__hamburger mbr-hamburger text-white">
                     <span class="mbr-hamburger__line"></span>
@@ -20,8 +26,8 @@
                         <div class="mbr-navbar__column">
                             <ul class="mbr-navbar__items mbr-navbar__items--right mbr-buttons mbr-buttons--freeze mbr-buttons--right btn-decorator mbr-buttons--active">
                                 <li class="mbr-navbar__item">
-                                    <a class="mbr-buttons__link btn text-white" href="#">
-                                        USUARIO
+                                    <a class="mbr-buttons__link btn text-white" href="#">'
+                                        .$usuario .'
                                     </a>
                                 </li>
                                 <li class="mbr-navbar__item">
@@ -33,7 +39,7 @@
                                     <div class="mbr-navbar__column">
                                         <ul class="mbr-navbar__items mbr-navbar__items--right mbr-buttons mbr-buttons--freeze mbr-buttons--right btn-inverse mbr-buttons--active">
                                             <li class="mbr-navbar__item">
-                                                <a class="mbr-buttons__btn btn btn-danger" href="#">
+                                                <a class="mbr-buttons__btn btn btn-danger" href="?view=logout">
                                                     SALIR
                                                 </a>
                                             </li>

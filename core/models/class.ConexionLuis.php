@@ -28,6 +28,20 @@ class Conexion extends mysqli {
 	public function recorrer($query) {
 		return mysqli_fetch_array($query);
 	}
+
+	/**
+     * Un método para desconectarse de la base de datos 
+     *
+     * @params string $connection nombre de conexión para desconectarse 
+     * @return void
+     */
+    public function disconnect($connection = 'default')
+    {
+        if (!isset($this->_mysqli[$connection]))
+            return;
+        $this->_mysqli[$connection]->close();
+        unset($this->_mysqli[$connection]);
+    }
 }
 
 ?>

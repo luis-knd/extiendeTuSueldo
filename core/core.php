@@ -33,6 +33,7 @@ define('PHPMAILER_PORT', 465);								//Puerto del Mail
 
 #Estructura
 require('core/models/class.Conexion.php');			//incluye la clase de conexion a la BD
+require('core/models/class.Pais.php');				//incluye la clase de país
 require('core/bin/functions/ObtenerDivisas.php');
 require('core/bin/functions/Encrypt.php');
 
@@ -47,7 +48,7 @@ $realPorPeso = conversor_monedas("BRL","ARS",1); 	// Reales a Pesos Argentinos
 settype($realPorPeso,'float');						// Parseamos la variable a Float
 
 $bolivarPorDolar = dolarToday()["USD"]["transferencia"]; // Bolívar por Dolar
-settype($bolivarPorDolar,'float');						 // Parseamos la variable a Float
+settype($bolivarPorDolar,'double');						 // Parseamos la variable a Float
 $bolivarPorPeso  = $bolivarPorDolar / $dolarPorPeso; 	 // Bolívar por Pesos Arg
 
 ?>
